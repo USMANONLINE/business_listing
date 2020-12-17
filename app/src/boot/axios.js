@@ -8,7 +8,7 @@ const server = axios.create({
 
 Vue.mixin({
   data: () => ({
-    domain: 'http://localhost:8080/assets/'
+    domain: 'http://localhost:8000/assets/'
   }),
   methods: {
     get (endpoint) {

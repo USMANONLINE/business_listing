@@ -28,7 +28,7 @@ module.exports = function (server, errs, model) {
         address: req.body.address,
         visible: req.body.visible,
         views: req.body.views
-      })
+      }, { where: { id: req.params.id } })
       res.send(200, listing)
       next()
     } catch (error) {

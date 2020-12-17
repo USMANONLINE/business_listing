@@ -108,7 +108,7 @@
             <q-btn @click="temp = props.row, dialog.info = true" round color="positive" icon="info" size="sm" flat dense>
               <q-tooltip>More Info</q-tooltip>
             </q-btn>
-            <q-btn round color="negative" icon="delete" size="sm" flat dense>
+            <q-btn @click="deleteListing(props.row.id)" round color="negative" icon="delete" size="sm" flat dense>
               <q-tooltip>Delete</q-tooltip>
             </q-btn>
           </q-td>
@@ -122,6 +122,27 @@
           <q-toolbar-title>Info</q-toolbar-title>
           <q-btn icon="close" flat round dense v-close-popup />
         </q-toolbar>
+        <q-card-section v-if="temp.images !== undefined && temp.images.length === 0">
+          <q-img
+            :src="domain + 'business.png'"
+          />
+        </q-card-section>
+        <q-card-section v-if="temp.images !== undefined && temp.images.length > 0">
+          <q-carousel
+            autoplay
+            animated
+            v-model="slide"
+            arrows
+            navigation
+            infinite
+          >
+            <q-carousel-slide
+              v-for="(img, index) in temp.images"
+              :key="index"
+              :name="index + 1"
+              :img-src="img.name" />
+          </q-carousel>
+        </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="text-subtitle1">Category</div>
@@ -158,6 +179,7 @@ import { server } from 'boot/axios'
 
 export default {
   data: () => ({
+    slide: 1,
     temp: {},
     dialog: {
       info: false,
@@ -182,8 +204,32 @@ export default {
   }),
 
   methods: {
+    deleteListing (id) {
+      const endpoint = '/listing/' + id
+      this.delete(endpoint).then(response => {
+        const index = this.listings.findIndex(lst => lst.id === id)
+        this.listings.splice(index, 1)
+        this.success('Business deleted successfully')
+      }).catch(error => {
+        this.failure('Unable to delete errors')
+        return error
+      })
+    },
     hideBusiness (business) {
-      console.log(business)
+      const copy = Object.assign({}, business)
+      const endpoint = '/listing/' + copy.id
+      copy.visible = !copy.visible
+      this.put(endpoint, copy).then(response => {
+        this.success('Business visibility changed successfully')
+        this.dialog.info = !this.dialog.info
+        const lst = this.listings.findIndex(ls => ls.id === business.id)
+        this.listings[lst] = copy
+        this.listings = this.listings.slice()
+      }).catch(error => {
+        console.log(error)
+        this.failure('Unable to change business visibility')
+        return error
+      })
     },
     createListing () {
       const lst = {

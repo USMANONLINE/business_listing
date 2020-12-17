@@ -16,9 +16,10 @@
     </div>
 
     <div class="row q-mt-sm">
-      <div class="col-xs-12 col-sm-12 col-md-3" v-for="(business, index) in listings" :key="index">
+      <div class="col-xs-12 col-sm-12 col-md-3 q-pa-xs" v-for="(business, index) in listings" :key="index">
         <q-card class="my-card" flat bordered>
           <q-img
+            style="width: 100%; height: 180px"
             :src="getImgSource(business.images)"
           />
 
@@ -45,11 +46,10 @@ export default {
 
   methods: {
     getImgSource (images) {
-      const url = 'http://localhost:8000/assets/'
       if (images.length > 0) {
-        return url + images[0].name
+        return images[0].name
       } else {
-        return 'http://localhost:8000/assets/business.png'
+        return this.domain + '/business.png'
       }
     }
   },
