@@ -38,7 +38,7 @@ module.exports = function (server, errs, model) {
 
   server.get('/api/listing/:id', async function (req, res, next) {
     try {
-      const listing = await model.listing.findByPk(req.params.id)
+      const listing = await model.listing.findByPk(req.params.id, { include: [model.image, model.category] })
       if (listing !== null) {
         res.send(200, listing)
       } else {

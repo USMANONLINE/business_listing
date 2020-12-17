@@ -29,7 +29,7 @@
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn flat color="primary" label="View" />
+            <q-btn flat color="primary" label="View" :to="{ name: 'Business_View', params: { id: business.id } }" />
           </q-card-actions>
 
         </q-card>
