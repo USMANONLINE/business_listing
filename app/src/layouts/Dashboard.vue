@@ -35,7 +35,7 @@
           </q-item>
           <q-separator class="bg-white" />
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple :to="{ name: 'Home' }" exact>
             <q-item-section avatar>
               <q-icon name="power_settings_new" />
             </q-item-section>

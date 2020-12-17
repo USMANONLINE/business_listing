@@ -94,7 +94,16 @@
     <q-table
       :columns="columns"
       :data="listings"
+      :filter="search"
     >
+      <template v-slot:top>
+        <q-space/>
+        <q-input placeholder="Search" borderless dense debounce="300" color="primary" v-model.trim="search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="no" :props="props">{{ listings.indexOf(props.row) + 1 }}</q-td>
@@ -179,6 +188,7 @@ import { server } from 'boot/axios'
 
 export default {
   data: () => ({
+    search: '',
     slide: 1,
     temp: {},
     dialog: {
@@ -253,18 +263,22 @@ export default {
           categories.push({ listingId: response.data.id, categoryId: sample.id })
         })
 
-        this.post('/listing-images', images).then(res => {
-          this.post('/listing-categories', categories).then(r => {
+        this.post('/listing-categories', categories).then(r => {
+          this.post('/listing-images', images).then(res => {
             this.success('Listing created successfully')
             this.dialog.newListing = !this.dialog.newListing
             this.listing = { files: null }
-          }).catch(e => {
-            this.failure('Unable to upload listing. Please try again !')
-            return e
+            this.getBusiness(response.data.id)
+          }).catch(err => {
+            this.success('Listing created successfully')
+            this.dialog.newListing = !this.dialog.newListing
+            this.listing = { files: null }
+            this.getBusiness(response.data.id)
+            return err
           })
-        }).catch(err => {
+        }).catch(e => {
           this.failure('Unable to upload listing. Please try again !')
-          return err
+          return e
         })
       }).catch(error => {
         this.failure('Unable to upload listing. Please try again !')
@@ -318,6 +332,14 @@ export default {
         })
       }).catch(error => {
         this.failure('Unable to load categories')
+        return error
+      })
+    },
+
+    getBusiness (id) {
+      this.get('/listing/' + id).then(response => {
+        this.listings.push(response.data)
+      }).catch(error => {
         return error
       })
     }

@@ -70,6 +70,16 @@ module.exports = function (server, errs, model) {
     }
   })
 
+  server.get('/api/public-listing', async function (req, res, next) {
+    try {
+      const listing = await model.listing.findAll({ where: { visible: true }, include: [model.image, model.category] })
+      res.send(200, listing)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
   // Relations endpoints
 
 }

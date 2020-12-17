@@ -11,6 +11,8 @@
             name="username"
             label="Account Username"
             outlined
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Please type name']"
           >
             <template v-slot:prepend>
               <q-icon name="account_circle" />
@@ -21,6 +23,8 @@
             name="password"
             label="Account Password"
             outlined
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Please type password']"
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -28,7 +32,7 @@
           </q-input>
           <q-btn
             label="Sign in"
-            type="submit"
+            :to="{ name: 'Category' }"
             color="primary"
           />
         </q-form>
