@@ -7,6 +7,7 @@
           Business Listing
         </q-toolbar-title>
 
+        <q-btn label="Sign in" flat :to="{ name: 'Signin'}"/>
       </q-toolbar>
     </q-header>
 

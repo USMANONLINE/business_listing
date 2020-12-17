@@ -90,6 +90,63 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <q-table
+      :columns="columns"
+      :data="listings"
+    >
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td key="no" :props="props">{{ listings.indexOf(props.row) + 1 }}</q-td>
+          <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+          <q-td key="email" :props="props">{{ props.row.email }}</q-td>
+          <q-td key="phone" :props="props">{{ props.row.phone }}</q-td>
+          <q-td key="url" :props="props">{{ props.row.url }}</q-td>
+          <q-td key="views" :props="props">{{ props.row.views }}</q-td>
+          <q-td key="visible" :props="props">{{ props.row.visible }}</q-td>
+          <q-td key="actions" :props="props">
+            <q-btn @click="temp = props.row, dialog.info = true" round color="positive" icon="info" size="sm" flat dense>
+              <q-tooltip>More Info</q-tooltip>
+            </q-btn>
+            <q-btn round color="negative" icon="delete" size="sm" flat dense>
+              <q-tooltip>Delete</q-tooltip>
+            </q-btn>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
+
+    <q-dialog v-model="dialog.info">
+      <q-card style="width: 450px">
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title>Info</q-toolbar-title>
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-toolbar>
+        <q-separator/>
+        <q-card-section>
+          <div class="text-subtitle1">Category</div>
+          <q-chip icon="assignment" v-for="(category, index) in temp.categories" :key="index">{{ category.title }}</q-chip>
+        </q-card-section>
+
+        <q-separator/>
+        <q-card-section>
+          <div class="text-subtitle1">Description</div>
+          <div class="text-caption">{{ temp.description }}</div>
+        </q-card-section>
+
+        <q-separator/>
+        <q-card-section>
+          <div class="text-subtitle1">Address</div>
+          <div class="text-caption">{{ temp.address }}</div>
+        </q-card-section>
+
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn label="Hide Business" flat color="primary" @click="hideBusiness(temp)"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn @click="dialog.newListing = !dialog.newListing" fab icon="add" glossy color="primary" />
     </q-page-sticky>
@@ -101,9 +158,22 @@ import { server } from 'boot/axios'
 
 export default {
   data: () => ({
+    temp: {},
     dialog: {
+      info: false,
       newListing: false
     },
+
+    columns: [
+      { name: 'no', label: 'No', field: 'no', sortable: true },
+      { name: 'name', label: 'Name', field: 'name', sortable: true },
+      { name: 'email', label: 'Email', field: 'email', sortable: true },
+      { name: 'phone', label: 'Phone', field: 'phone', sortable: true },
+      { name: 'url', label: 'Url', field: 'url', sortable: true },
+      { name: 'views', label: 'Views', field: 'views', sortable: true },
+      { name: 'visible', label: 'Visible', field: 'visible', sortable: true },
+      { name: 'actions', label: 'Actions', field: 'actions', sortable: true }
+    ],
 
     listing: { files: null },
     listings: [],
@@ -112,6 +182,9 @@ export default {
   }),
 
   methods: {
+    hideBusiness (business) {
+      console.log(business)
+    },
     createListing () {
       const lst = {
         name: this.listing.name,
@@ -168,7 +241,7 @@ export default {
         if (imagekeys.length > 1) {
           for (let index = 0; index < imagekeys.length; index++) {
             const path = response.data[imagekeys[index]].path
-            images.push({ name: path.substring(7) })
+            images.push({ name: this.domain + path.substring(7) })
           }
           return this.post('/images', images).then(res => {
             this.listing.images = res.data.map(img => img.id)
