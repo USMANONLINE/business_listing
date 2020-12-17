@@ -62,4 +62,27 @@ module.exports = function (server, errs, model) {
     }
   })
 
+  server.post('/api/listing-category', async function (req, res, next) {
+    try {
+      const lstcat = await model.listing_category.create({
+        listingId: req.body.listingId,
+        categoryId: req.body.categoryId
+      })
+      res.send(201, lstcat)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
+  server.post('/api/listing-categories', async function (req, res, next) {
+    try {
+      const lstcat = await model.listing_category.bulkCreate(req.body)
+      res.send(201, lstcat)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
 }

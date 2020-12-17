@@ -52,7 +52,7 @@ module.exports = function (server, errs, model) {
 
   server.get('/api/listing', async function (req, res, next) {
     try {
-      const listing = await model.listing.findAll()
+      const listing = await model.listing.findAll({ include: [model.image, model.category] })
       res.send(200, listing)
       next()
     } catch (error) {
@@ -69,5 +69,7 @@ module.exports = function (server, errs, model) {
       return next(new errs.BadRequestError(error));
     }
   })
+
+  // Relations endpoints
 
 }

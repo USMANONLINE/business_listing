@@ -25,10 +25,10 @@ model.listing.belongsToMany(model.category, { through: model.listing_category })
 model.category.belongsToMany(model.listing, { through: model.listing_category });
 
 // Build Models
-sequelize.sync({ alter: true }).then(response => {
-    console.log(response)
-}).catch(error => {
-    console.log(error)
-})
+// sequelize.sync({ alter: true }).then(response => {
+//     console.log(response)
+// }).catch(error => {
+//     console.log(error)
+// })
 
 module.exports = model;

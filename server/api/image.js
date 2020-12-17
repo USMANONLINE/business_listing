@@ -62,4 +62,43 @@ module.exports = function (server, errs, model) {
     }
   })
 
+  server.post('/api/picture-upload', async function (req, res, next) {
+    const record = await req.files
+    res.send(201, record)
+    next()
+  })
+
+  server.post('/api/images', async function (req, res, next) {
+    try {
+      const images = await model.image.bulkCreate(req.body)
+      res.send(201, images)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
+  server.post('/api/listing-image', async function (req, res, next) {
+    try {
+      const images = await model.listing_image.create({
+        listingId: req.body.listingId,
+        imageId: req.body.imageId
+      })
+      res.send(201, images)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
+  server.post('/api/listing-images', async function (req, res, next) {
+    try {
+      const images = await model.listing_image.bulkCreate(req.body)
+      res.send(201, images)
+      next()
+    } catch (error) {
+      return next(new errs.BadRequestError(error));
+    }
+  })
+
 }
